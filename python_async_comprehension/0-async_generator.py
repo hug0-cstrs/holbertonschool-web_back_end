@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+"""A module with a asynchronous generator"""
 import asyncio
 import random
 from typing import Generator
