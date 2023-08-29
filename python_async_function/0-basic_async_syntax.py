@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """A module with a asynchronus routine"""
-import asyncio, random
+import asyncio
+import random
+
 
 async def wait_random(max_delay: int = 10) -> float:
     """
