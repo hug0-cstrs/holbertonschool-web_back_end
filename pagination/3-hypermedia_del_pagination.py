@@ -30,12 +30,10 @@ class Server:
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """
-        Dataset indexed by sorting position, starting at 0
+        """Dataset indexed by sorting position, starting at 0
         """
         if self.__indexed_dataset is None:
             dataset = self.dataset()
-            truncated_dataset = dataset[:1000]
             self.__indexed_dataset = {
                 i: dataset[i] for i in range(len(dataset))
             }
@@ -56,20 +54,23 @@ class Server:
         data: the actual page of the dataset
         """
         assert (isinstance(index, int)
-                and index in range(len(self.__indexed_dataset)))
+                and index >= 0)
+
         data = []
         start_index = index
         next_index = index + page_size
 
-        for i in range(start_index, next_index):
-            if i in self.indexed_dataset():
-                data.append(self.indexed_dataset()[i])
+        while start_index < next_index:
+            if start_index in self.indexed_dataset():
+                data.append(self.indexed_dataset()[start_index])
             else:
-                next_index += 1
+                start_index += 1
+                continue
+            start_index += 1
 
         return {
             'index': index,
-            'next_index': next,
+            'next_index': start_index,
             'page_size': len(data),
             'data': data
         }
