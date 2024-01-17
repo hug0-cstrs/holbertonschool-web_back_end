@@ -1,6 +1,6 @@
 # holbertonschool-web_back_end
 
-## Files
+## Files 📜
 
 | directories                              | Description                               |
 | ---------------------------------------- | ----------------------------------------- |
