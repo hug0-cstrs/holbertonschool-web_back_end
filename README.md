@@ -1,5 +1,7 @@
 # holbertonschool-web_back_end
 
+![web_back_end](https://www.caramelit.com/images/backend.jpg)
+
 ## Files 📜
 
 | directories                              | Description                               |
