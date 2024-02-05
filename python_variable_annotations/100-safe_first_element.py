@@ -2,11 +2,11 @@
 """
     Duck typing sequence Any
 """
-from typing import Sequence, Optional, Union, Any
+from typing import Sequence, Union, Any
 
 
 # The types of the elements of the input are not known
-def safe_first_element(lst: Sequence[Any]) -> Union[Any, Optional[Any]]:
+def safe_first_element(lst: Sequence[Any]) -> Union[Any, None]:
     """
         Args:
             lst: Any data type
