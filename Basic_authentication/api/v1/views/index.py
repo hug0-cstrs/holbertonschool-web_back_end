@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/ python3
 """ Module of Index views
 """
 from flask import jsonify, abort
