@@ -47,10 +47,14 @@ class BasicAuth(Auth):
         the Base64 decoded value
         """
         if (decoded_base64_authorization_header is None or
-                not isinstance(decoded_base64_authorization_header, str) or
-                ":" not in decoded_base64_authorization_header):
+                not isinstance(decoded_base64_authorization_header, str)):
             return (None, None)
-        return tuple(decoded_base64_authorization_header.split(":", 1))
+
+        credentials = decoded_base64_authorization_header.split(":", 1)
+        if len(credentials) != 2:
+            return (None, None)
+
+        return tuple(credentials)
 
     def user_object_from_credentials(
             self, user_email: str, user_pwd: str) -> TypeVar('User'):
