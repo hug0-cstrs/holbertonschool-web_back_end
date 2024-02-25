@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """ Module of Users views
 """
-from typing import TypeVar
-
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models.user import User
@@ -20,28 +18,26 @@ def view_all_users() -> str:
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def view_one_user(user_id: str = None) -> str:
-    """ GET /api/v1/users/id or me
+    """ GET /api/v1/users/:id
     Path parameter:
       - User ID
-      - Me user
     Return:
       - User object JSON represented
       - 404 if the User ID doesn't exist
     """
     if user_id is None:
         abort(404)
-
     if user_id == 'me' and request.current_user is None:
         abort(404)
-
-    user: TypeVar('User') = User()
     if user_id == 'me' and request.current_user is not None:
-        return jsonify(request.current_user.to_json())
-
+        user = request.current_user
+        user = User.get(user.id)
+        if user is None:
+            abort(404)
+        return jsonify(user.to_json())
     user = User.get(user_id)
     if user is None:
         abort(404)
-
     return jsonify(user.to_json())
 
 
@@ -56,6 +52,12 @@ def delete_user(user_id: str = None) -> str:
     """
     if user_id is None:
         abort(404)
+    if user_id == "me" and request.current_user is None:
+        abort(404)
+
+    if user_id == "me" and request.current_user is not None:
+        return jsonify(request.current_user.to_json())
+
     user = User.get(user_id)
     if user is None:
         abort(404)
