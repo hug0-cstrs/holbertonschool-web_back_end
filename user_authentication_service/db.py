@@ -67,8 +67,11 @@ class DB:
 
         # Update the user's attributes based on the provided arguments
         for k, v in kwargs.items():
-            # Ensure that the user object has the attribute
-            setattr(user, k, v)
+            if hasattr(user, k):  # check if the user object has the attribute
+                # Ensure that the user object has the attribute
+                setattr(user, k, v)
+            else:
+                raise ValueError
 
         # Commit the changes to the database
         self._session.commit()
