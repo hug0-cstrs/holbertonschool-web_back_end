@@ -2,11 +2,17 @@
 """ Main file
 """
 
+<<<<<<< HEAD
 from auth import Auth
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 AUTH = Auth()
+=======
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+>>>>>>> 03d642334312b0705d6b88ba6464d9d93106e684
 
 
 @app.route('/')
@@ -28,3 +34,4 @@ def users():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
+
