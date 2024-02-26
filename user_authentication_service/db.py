@@ -56,11 +56,22 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """
-            update_user: updates the user's attributes as passed
-            in the method's arguments
+        update_user: updates the user's attributes as passed
+        in the method's arguments
         """
-        user = self.find_user_by(id=user_id)
+        # Find the user by the provided user_id
+        try:
+            user = self.find_user_by(id=user_id)
+        except (InvalidRequestError, NoResultFound):
+            return
+
+        # Update the user's attributes based on the provided arguments
         for k, v in kwargs.items():
+            # Ensure that the user object has the attribute
             setattr(user, k, v)
+
+        # Commit the changes to the database
         self._session.commit()
+
+        # Return None
         return None
