@@ -20,10 +20,15 @@ def users():
     password = request.form.get('password')
 
     try:
-        AUTH.register_user(email, password)
-        return jsonify({"email": email, "message": "user created"})
+        if AUTH.valid_login(email, password):
+            session_id = AUTH.create_session(email)
+            response = jsonify({"email": email, "message": "logged in"})
+            response.set_cookie('session_id', session_id)
+            return response
+        else:
+            abort(401)
     except ValueError:
-        return jsonify({"message": "email already registered"}), 400
+        abort(401)
 
 @app.route('/sessions', methods=['POST'])
 def login():
