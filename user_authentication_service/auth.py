@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """ Auth module """
 
+import uuid
+
 import bcrypt
 from db import DB
 from sqlalchemy.exc import InvalidRequestError
@@ -41,3 +43,8 @@ class Auth:
                                   user.hashed_password)
         except NoResultFound:
             return False
+
+    def _generate_uuid() -> str:
+        """ _generate_uuid: returns a string representation of a new UUID
+        """
+        return str(uuid.uuid4())
