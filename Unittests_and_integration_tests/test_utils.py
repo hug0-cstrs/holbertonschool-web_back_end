@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Unittests for utils.py"""
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from parameterized import parameterized
 from utils import access_nested_map, get_json, memoize
@@ -47,22 +47,26 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """ Class for Testing"""
+    """ Class for Testing Memoize """
 
     def test_memoize(self):
-        """ Test that memoize behaves as expected """
+        """ Test that when calling a_property twice, the correct result
+        is returned but a_method is only called once using
+        assert_called_once
+        """
 
         class TestClass:
+            """ Test Class for wrapping with memoize """
+
             def a_method(self):
                 return 42
 
             @memoize
             def a_property(self):
-                """A property that memoizes a_method"""
                 return self.a_method()
 
-        with patch.object(TestClass, 'a_method') as mock_method:
+        with patch.object(TestClass, 'a_method') as mock:
             test_class = TestClass()
             test_class.a_property()
             test_class.a_property()
-            mock_method.assert_called_once()
+            mock.assert_called_once()
