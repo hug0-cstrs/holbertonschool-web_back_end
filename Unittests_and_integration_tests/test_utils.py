@@ -51,6 +51,7 @@ class TestMemoize(unittest.TestCase):
 
     def test_memoize(self):
         """ Test that memoize behaves as expected """
+
         class TestClass:
             def a_method(self):
                 return 42
