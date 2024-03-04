@@ -44,3 +44,11 @@ class TestGetJson(unittest.TestCase):
         self.assertEqual(get_json(test_url), test_payload)
         mock.assert_called_once()
         patcher.stop()
+
+
+class TestMemoize(unittest.TestCase):
+    """ Class for Testing"""
+
+    def test_memoize(self):
+        """ Test that memoize behaves as expected """
+        pass
