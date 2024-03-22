@@ -2,6 +2,7 @@
 """
 Generate a new element in Redis
 """
+
 from functools import wraps
 from typing import Callable, Optional, Union
 from uuid import UUID, uuid4
