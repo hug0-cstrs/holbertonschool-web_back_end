@@ -1,40 +1,11 @@
 #!/usr/bin/env python3
 """
-Writing strings to Redis
+Generate a new element in Redis
 """
-import uuid
 from functools import wraps
-from typing import Any, Callable, Optional, Union
-
 import redis
-
-
-def call_history(method: Callable) -> Callable:
-    """ store the history of inputs and outputs for a particular function """
-    key = method.__qualname__
-    inputs = key + ":inputs"
-    outputs = key + ":outputs"
-
-    @wraps(method)
-    def wrapper(self, *args, **kwds):
-        """ wrapped function """
-        self._redis.rpush(inputs, str(args))
-        data = method(self, *args, **kwds)
-        self._redis.rpush(outputs, str(data))
-        return data
-    return wrapper
-
-
-def count_calls(method: Callable) -> Callable:
-    """ to count how many times methods of the Cache class are called """
-    key = method.__qualname__
-
-    @wraps(method)
-    def wrapper(self, *args, **kwds):
-        """ wrapped function """
-        self._redis.incr(key)
-        return method(self, *args, **kwds)
-    return wrapper
+from typing import Callable, Optional, Union
+from uuid import uuid4, UUID
 
 
 def replay(fn: Callable):
@@ -66,45 +37,88 @@ def replay(fn: Callable):
         print(f'{f_name}(*{i}) -> {o}')
 
 
-class Cache:
+def count_calls(method: Callable) -> Callable:
+    """ Decorator for counting how many times a function
+    has been called """
+
+    key = method.__qualname__
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """ Wrapper for decorator functionality """
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+
+    return wrapper
+
+
+def call_history(method: Callable) -> Callable:
     """
-    Class Cache.
+    store the history of inputs and
+    outputs for a particular function.
     """
 
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+        Wrapper for decorator functionality
+        """
+        input = str(args)
+        self._redis.rpush(method.__qualname__ + ":inputs", input)
+
+        output = str(method(self, *args, **kwargs))
+        self._redis.rpush(method.__qualname__ + ":outputs", output)
+
+        return output
+
+    return wrapper
+
+
+class Cache:
+    """ Class for implementing a Cache """
+
     def __init__(self):
-        """ Init """
+        """ Constructor Method """
         self._redis = redis.Redis()
         self._redis.flushdb()
 
     @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
+        """Store the input data in Redis using a
+        random key and return the key.
         """
-        Store
-        """
-        key = str(uuid.uuid4())
-        self._redis.set(key, data)
-        return key
+        random_key = str(uuid4())
+        self._redis.set(random_key, data)
+
+        return random_key
 
     def get(self, key: str,
             fn: Optional[Callable] = None) -> Union[str, bytes, int, float]:
-        """ convert the data back to the desired format """
-        val = self._redis.get(key)
-        return val if not fn else fn(val)
+        """
+        store input data in dedis using a random key
+        and return a key
+        """
+        value = self._redis.get(key)
+        if fn:
+            value = fn(value)
+
+        return value
 
     def get_str(self, key: str) -> str:
-        """ automatically parametrize Cache.get to str """
-        value = self._redis
-        return value.get(key, fn=lambda d: d.decode("utf-8"))
+        """
+        param a value from redis to str
+        """
+        value = self._redis.get(key)
+        return value.decode('utf-8')
 
-    def get_int(self, key: str) -> int:
-        """ Get int """
-        data = self._redis.get(key)
+    def get_int(self, key: int) -> int:
+        """
+        param a value from redis to int
+        """
+        value = self._redis.get(key)
         try:
-            data = int(data.decode("utf-8"))
+            value = int(value.decode('utf-8'))
         except Exception:
-            data = 0
-        return data
-
-    def _generate_key(self):
-        return str(uuid.uuid4())
+            value = 0
+        return value
