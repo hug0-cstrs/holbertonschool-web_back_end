@@ -2,10 +2,11 @@
 """
 Writing strings to Redis
 """
-from typing import Union, Callable, Optional, Any
-import redis
 import uuid
 from functools import wraps
+from typing import Any, Callable, Optional, Union
+
+import redis
 
 
 def call_history(method: Callable) -> Callable:
@@ -27,6 +28,7 @@ def call_history(method: Callable) -> Callable:
 def count_calls(method: Callable) -> Callable:
     """ to count how many times methods of the Cache class are called """
     key = method.__qualname__
+
     @wraps(method)
     def wrapper(self, *args, **kwds):
         """ wrapped function """
@@ -35,27 +37,24 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(method: Callable):
-    """ Display the history. """
+def replay(self, method: Callable):
+    """ display the history of calls of a particular function """
     key = method.__qualname__
-    inputs = key + ":inputs"
-    outputs = key + ":outputs"
-    redis = method.__self__._redis
-    count = redis.get(key).decode("utf-8")
-    print("{} was called {} times:".format(key, count))
-    input_list = redis.lrange(inputs, 0, -1)
-    output_list = redis.lrange(outputs, 0, -1)
-    redis_zipped = list(zip(input_list, output_list))
-
-    for a, b in redis_zipped:
-        attr, data = a.decode("utf-8"), b.decode("utf-8")
-        print("{}(*{}) -> {}".format(key, attr, data))
+    inputs = self._redis.lrange(key + ":inputs", 0, -1)
+    outputs = self._redis.lrange(key + ":outputs", 0, -1)
+    count = len(inputs)
+    print(f"{key} was called {count} times:")
+    for i in range(count):
+        args = inputs[i].decode("utf-8")
+        result = outputs[i].decode("utf-8")
+        print(f"{key}(*{args}) -> {result}")
 
 
 class Cache:
     """
     Class Cache.
     """
+
     def __init__(self):
         """ Init """
         self._redis = redis.Redis()
