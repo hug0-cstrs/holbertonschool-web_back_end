@@ -55,3 +55,22 @@ class Cache:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
+
+    def call_history(method: Callable) -> Callable:
+        """ Decorator to store history of inputs and outputs """
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
+            input_key = method.__qualname__ + ":inputs"
+            output_key = method.__qualname__ + ":outputs"
+            self._redis.rpush(input_key, str(args))
+            output = method(self, *args, **kwargs)
+            self._redis.rpush(output_key, output)
+            return output
+        return wrapper
+
+    @call_history
+    def store(self, data: Union[str, bytes, int, float]) -> str:
+        """ Store data in redis """
+        key = str(uuid.uuid4())
+        self._redis.set(key, data)
+        return key
