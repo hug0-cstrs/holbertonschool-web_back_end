@@ -3,9 +3,10 @@
 Generate a new element in Redis
 """
 from functools import wraps
-import redis
 from typing import Callable, Optional, Union
-from uuid import uuid4, UUID
+from uuid import UUID, uuid4
+
+import redis
 
 
 def replay(fn: Callable):
