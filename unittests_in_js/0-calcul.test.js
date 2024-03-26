@@ -14,4 +14,13 @@ describe('calculateNumber', function() {
   it('should return 6', () => {
     assert.strictEqual(calculateNumber(1.4, 3.5), 5);
   });
+  it('negative numbers', () => {
+    assert.strictEqual(calculateNumber(-1, 1), 0);
+    assert.strictEqual(calculateNumber(1, -1), 0);
+    assert.strictEqual(calculateNumber(-1, -1), -2);
+  });
+  it('checks arguments', () => {
+    assert.strictEqual(isNaN(calculateNumber(1)), true);
+    assert.strictEqual(isNaN(calculateNumber()), true);
+  });
 });
