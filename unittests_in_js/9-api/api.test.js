@@ -35,7 +35,7 @@ describe('Integration Testing', () => { // Describe the test suite for the API
   describe('GET /cart/8', () => {
     it('Responds with 200 and id 1 in msg', (done) => {
       const options = {
-        url: 'http://localhost:7865/cart/1',
+        url: 'http://localhost:7865/cart/8',
         method: 'GET',
       };
 
@@ -50,7 +50,7 @@ describe('Integration Testing', () => { // Describe the test suite for the API
   describe('GET /cart/111', () => {
     it('Responds with 200 and id 12 in msg', (done) => {
       const options = {
-        url: 'http://localhost:7865/cart/123',
+        url: 'http://localhost:7865/cart/111',
         method: 'GET',
       };
 
